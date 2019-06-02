@@ -1,8 +1,6 @@
 # RandomLoopComposer
 
-Allows you to discover loops in a song with a consistent BPM and arrange a new random song with your selections.
-
-An example of this code in action can be [seen here](http://realultimatetv.com/RandomLoopComposer/).
+Allows you to discover loops in a song with a consistent BPM and arrange a new random song with your selections. An example of this code in action can be [seen here](http://realultimatetv.com/RandomLoopComposer/).
 
 ## Setup
 
