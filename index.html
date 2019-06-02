@@ -1,0 +1,221 @@
+<html>
+
+<head>
+<title>Random Loop Composer</title>
+<script src="jquery-1.10.2.min.js"></script>
+<script>
+
+/*
+	MIT License
+
+	Copyright (c) 2019  mouseonew http://mouseonew.com https://github.com/mouseonew
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+	window.onclick=start;
+	
+	function start(){
+	
+		var beat=new Audio('song_untitled_130bpm.mp3');
+		var beat2=new Audio('song_untitled_130bpm.mp3');
+		//
+		var beatMilliseconds=461.538*2;//130bpm 2bars
+		var loopsMinMax=[4,6];
+		var beatsMinMax=[1,8];
+		//
+		var currentBeat=beats;
+		var loops=1;
+		var beats=1;
+		var beatTime=0;
+		var savedLoops=[];
+		var doPlaySaved=false;
+		var lastLoopOnce=false;
+		//
+		beat.volume=0;
+		beat.volume=0;
+		beat.play();
+		beat2.play();
+		
+		window.onclick=function(event){
+		
+			if(event.target==$('#text')[0]||event.target==$('body')[0]||event.target==$('#playButton')[0]){
+				loops=1;
+				currentBeat=1;
+				$('#text').append('x');
+			}
+			
+		};
+		
+		var clear=function(){
+			if(doPlaySaved){
+				$('#text').html('Click anywhere to skip, click button to remove loop...<br/>');
+			}else{
+				$('#text').html('Click anywhere to skip, click button to save loop, double click button for no repeat, triple click button for both...<br/>');
+			}
+		}
+		clear();
+
+		setInterval(function(){
+		
+			$('#text').append('.');
+			currentBeat--;
+			if(!currentBeat){
+				beat2.volume=0;
+				$('#text').append(',');
+				loops--;
+				if(!loops){
+					beat2.currentTime=beatTime;
+					var segments=Math.floor(beat.duration/(beatMilliseconds/1000))-beats;
+					beatTime=Math.floor(Math.random()*segments)*(beatMilliseconds/1000);//Math.random()*(beat.duration-((loopMilliseconds/1000)*beats))
+					beats=beatsMinMax[0]+Math.round(Math.random()*(beatsMinMax[1]-beatsMinMax[0]));
+					loops=loopsMinMax[0]+Math.round(Math.random()*(loopsMinMax[1]-loopsMinMax[0]));
+					if(doPlaySaved&&savedLoops.length){
+						var r;
+						while(true){
+							r=Math.floor(Math.random()*savedLoops.length);
+							if(savedLoops[r][2]==1){
+								if(!lastLoopOnce){
+									lastLoopOnce=true;
+									break;
+								}
+							}else{
+								lastLoopOnce=false;
+								break;
+							}
+						}
+						beatTime=savedLoops[r][0];
+						beats=savedLoops[r][1];
+						loops=savedLoops[r][2];
+						if(loops>1){
+							loops=2;
+						}
+						if(Math.random()<.4){
+							loops=1;
+						}
+					}
+					if($('#text a').length>40){
+						clear();
+					}
+					if(doPlaySaved){
+						$('#text').append(' <a href="#" onclick="removeLoop(this,'+beatTime+','+beats+');return false;">&nbsp;X&nbsp;</a>');
+					}else{
+						$('#text').append(' <a href="#" onclick="saveLoop(this,'+beatTime+','+beats+','+loops+');return false;">&nbsp;&gt;&nbsp;</a>');
+					}
+				}
+				currentBeat=beats;
+				beat.currentTime=beatTime;
+				beat.volume=1;
+				beat.play();
+			}else if(doPlaySaved&&(Math.random()<.25)){
+				beat.volume=0;
+				if(Math.random()<.75){
+					beat2.volume=1;
+					beat2.play();
+				}
+			}else{
+				beat.volume=1;
+				beat.play();
+				beat2.volume=0;
+			}
+			
+		},beatMilliseconds);
+		
+		var saveLoop=function(a,time,beats,loops){
+			$(a).css('background-color','green');
+			var i=savedLoops.length-1;
+			if(i>=0){
+				if(savedLoops[i][0]==time&&savedLoops[i][1]==beats&&savedLoops[i][2]==loops){
+					savedLoops[i][2]=1;
+				}else{
+					savedLoops.push([time,beats,loops]);
+				}
+			}else{
+				savedLoops.push([time,beats,loops]);
+			}
+			$('#saved').html(savedLoops.length);
+		};
+		window.saveLoop=saveLoop;
+		
+		var removeLoop=function(a,time,beats){
+			$(a).css('background-color','red');
+			var i;
+			var len=savedLoops.length;
+			for(i=0;i<len;i++){
+				if(savedLoops[i][0]==time&&savedLoops[i][1]==beats){
+					savedLoops.splice(i,1);
+					len--;
+					i--;
+				}
+			}
+			$('#saved').html(savedLoops.length);
+		};
+		window.removeLoop=removeLoop;
+		
+		var playSaved=function(a){
+			if(doPlaySaved){
+				doPlaySaved=false;
+				$(a).html('&nbsp;&gt; Play Saved&nbsp;');
+			}else{
+				doPlaySaved=true;
+				$(a).html('&nbsp;&gt; Play Random&nbsp;');
+			}
+			clear();
+		}
+		window.playSaved=playSaved;
+		
+		var clearSaved=function(a){
+			clear();
+			savedLoops=[];
+			$('#saved').html('0');
+		}
+		window.clearSaved=clearSaved;
+	}
+
+</script>
+<style>
+	body{
+		font-size:32px;
+	}
+	a{
+		text-decoration: none;
+		border:1px solid black;
+	}
+	#menu{
+		position:fixed;
+		right:-1px;
+		bottom:-1px;
+		border:1px solid black;
+		padding:8px;
+		background-color:white;
+		z-index:1;
+	}
+</style>
+
+</head>
+
+<body>
+
+	<span id="text">Click to start</span>
+	
+	<div id="menu">Saved: <span id="saved">0</span> <a id="playButton" href="#" onclick="playSaved(this);return false;">&nbsp;&gt; Play Saved&nbsp;</a> <a href="#" onclick="clearSaved();return false;">&nbsp;Clear&nbsp;</a></div>
+
+</body>
+
+</html>
