@@ -1,471 +1,277 @@
-<!-- https://github.com/0n3tw0/SoundMaskerDistracterFocuser -->
 <html>
+
 <head>
+<title>Random Loop Composer</title>
+<script src="jquery-1.10.2.min.js"></script>
+<script>
 
-<script type="text/javascript">
+/*
+	MIT License
 
-window.onload = function () {
-    "use strict";
-    var paths = document.getElementsByTagName('path');
-    var visualizer = document.getElementById('visualizer');
-    var mask = visualizer.getElementById('mask');
-    var h = document.getElementsByTagName('h1')[0];
-    var path;
-    var report = 0;
+	Copyright (c) 2019  mouseonew http://mouseonew.com https://github.com/mouseonew
 
-	var tones=[
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+	window.onclick=start;
 	
-		//new Audio('range.mp3'),
-		//new Audio('range2.mp3'),
-		//new Audio('range3.mp3'),
-		
-		new Audio('range4.mp3'),
-		new Audio('range5.mp3'),
-		new Audio('range6.mp3'),
-		
-		//new Audio('range.mp3'),
-		//new Audio('range2.mp3'),
-		//new Audio('range3.mp3'),
-		
-		new Audio('range4.mp3'),
-		new Audio('range5.mp3'),
-		new Audio('range6.mp3'),
-		
-		//new Audio('range.mp3'),
-		//new Audio('range2.mp3'),
-		//new Audio('range3.mp3'),
-		
-		new Audio('range4.mp3'),
-		new Audio('range5.mp3'),
-		new Audio('range6.mp3'),
-		
-		//new Audio('range.mp3'),
-		//new Audio('range2.mp3'),
-		//new Audio('range3.mp3'),
-		
-		new Audio('range4.mp3'),
-		new Audio('range5.mp3'),
-		new Audio('range6.mp3'),
-		
+	function start(){
+	
+		var beat =new Audio('song_untitled_130bpm.mp3'); //main
+		var beat2=new Audio('song_untitled_130bpm.mp3'); //skip
+		var beat3=new Audio('song_untitled_130bpm.mp3'); //alternate main to fade
 		//
-		
-		new Audio('range4.mp3'),
-		new Audio('range5.mp3'),
-		new Audio('range6.mp3'),
-		
-		new Audio('range4.mp3'),
-		new Audio('range5.mp3'),
-		new Audio('range6.mp3'),
-		
-		new Audio('range4.mp3'),
-		new Audio('range5.mp3'),
-		new Audio('range6.mp3'),
-		
-		new Audio('range4.mp3'),
-		new Audio('range5.mp3'),
-		new Audio('range6.mp3'),
-
+		var beatMilliseconds=461.538*2;//130bpm 2bars
+		var loopsMinMax=[4,6];
+		var beatsMinMax=[1,8];
 		//
+		var currentBeat=beats;
+		var loops=1;
+		var beats=1;
+		var beatTime=0;
+		var savedLoops=[];
+		var doPlaySaved=false;
+		var lastLoopOnce=false;
+		//
+		beat.volume=0;
+		beat2.volume=0;
+		beat3.volume=0;
+		beat.play();
+		beat2.play();
+		beat3.play();
 		
-		new Audio('range7.mp3'),
-		new Audio('range7.mp3'),
-		new Audio('range7.mp3'),
+		window.onclick=function(event){
 		
-		new Audio('range8.mp3'),
-		new Audio('range8.mp3'),
-		new Audio('range8.mp3'),
-		
-		new Audio('range7.mp3'),
-		new Audio('range7.mp3'),
-		new Audio('range7.mp3'),
-		
-		new Audio('range8.mp3'),
-		new Audio('range8.mp3'),
-		new Audio('range8.mp3')
-		
-		
-		
-		
-		
-	];
-	
-	/*var sleep=new Audio('sleep.mp3');
-	var sleep2=new Audio('sleep2.mp3');
-	var dl=new Audio('dl.mp3');
-	var dl2=new Audio('dl2.mp3');
-	var dl3=new Audio('dl.mp3');
-	var dl4=new Audio('dl2.mp3');*/
-	
-	var sleep=new Audio('sleep.mp3');
-	var sleep2=new Audio('sleep2.mp3');
-	var dl=new Audio('voices.mp3');
-	var dl2=new Audio('voices.mp3');
-	var dl3=new Audio('voices.mp3');
-	var dl4=new Audio('voices.mp3');
-
-	var currentTone=tones[0];
-	var currentTonePlayedAt=0;
-	var maxAmplitude=300;
-	var maxHistory=[0];
-	var intervalPlay=100;
-	var lastTones=[];
-	var maxVolume=.4;//.04;
-	var volumeHistory=[0];
-    
-    var soundAllowed = function (stream) {
-	
-		
-		sleep.play();
-		sleep2.play();
-		dl.play();
-		dl2.play();
-		dl3.play();
-		dl4.play();
-		
-		setInterval(function(){
-			if(random2()<.25){
-				sleep.currentTime=random2()*sleep.duration;
-				sleep.playbackRate=.5+(random2()*1.5);
+			if(event.target==$('#text')[0]||event.target==$('body')[0]||event.target==$('html')[0]||event.target==$('#playButton')[0]){
+				loops=1;
+				currentBeat=1;
+				$('#text').append('x');
 			}
-			sleep.volume=.1+(volumeHistory[0]*.9);
-			sleep.play();
-		},100);
-		
-		setInterval(function(){
-			if(random2()<.25){
-				sleep2.currentTime=random2()*sleep2.duration;
-				sleep2.playbackRate=.5+(random2()*1.5);
-			}
-			sleep2.volume=.1+(volumeHistory[0]*.9);
-			sleep2.play();
-		},100);
-		
-		setInterval(function(){
-			if(random2()<.25){
-				dl.currentTime=random2()*dl.duration;
-				dl.playbackRate=.5+(random2()*1.5);
-			}
-			dl.volume=.1+(volumeHistory[0]*.75);
-			dl.play();
-		},400);  
-		
-		setInterval(function(){
-			if(random2()<.25){
-				dl2.currentTime=random2()*dl2.duration;
-				dl2.playbackRate=.5+(random2()*1.5);
-			}
-			dl2.volume=.1+(volumeHistory[0]*.75);
-			dl2.play();
-		},400);
-		
-		setInterval(function(){
-			if(random2()<.25){
-				dl3.currentTime=random2()*dl3.duration;
-				dl3.playbackRate=.5+(random2()*1.5);
-			}
-			dl3.volume=.1+(volumeHistory[0]*.75);
-			dl3.play();
-		},800);
-		
-		setInterval(function(){
-			if(random2()<.25){
-				dl4.currentTime=random2()*dl4.duration;
-				dl4.playbackRate=.5+(random2()*1.5);
-			}
-			dl4.volume=.1+(volumeHistory[0]*.75);
-			dl4.play();
-		},800);
-		
-		
-
-        //Audio stops listening in FF without // window.persistAudioStream = stream;
-        //https://bugzilla.mozilla.org/show_bug.cgi?id=965483
-        //https://support.mozilla.org/en-US/questions/984179
-        window.persistAudioStream = stream;
-        h.innerHTML = "Thanks";
-        h.setAttribute('style', 'opacity: 0;');
-        var audioContent = new AudioContext();
-        var audioStream = audioContent.createMediaStreamSource( stream );
-        var analyser = audioContent.createAnalyser();
-        audioStream.connect(analyser);
-        analyser.fftSize = 1024;
-
-        var frequencyArray = new Uint8Array(analyser.frequencyBinCount);
-        visualizer.setAttribute('viewBox', '0 0 255 255');
-      
-		//Through the frequencyArray has a length longer than 255, there seems to be no
-        //significant data after this point. Not worth visualizing.
-        for (var i = 0 ; i < 255; i++) {
-            path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('stroke-dasharray', '4,1');
-            mask.appendChild(path);
-        }
-		
-        var doDraw = function () {
-		
 			
+		};
+		
+		var clear=function(){
+			if(doPlaySaved){
+				$('#text').html('Click anywhere to skip, click button to remove loop<br/>');
+			}else{
+				$('#text').html('Click anywhere to skip, click button to save loop, double click button for no repeat, triple click button for both<br/>');
+			}
+		}
+		clear();
 
-            requestAnimationFrame(doDraw);
-            analyser.getByteFrequencyData(frequencyArray);
-          	var adjustedLength;
-			
-			var amplitude=0;
-			var ampTone=[];
-			var ampTotal=0;
-			var moduloEq=Math.floor(random2()*40);
-			var altAmp=random2()<.2?1:0;
-
-            for (var i2 = 0 ; i2 < 255; i2++) {
-
-              	adjustedLength = Math.floor(frequencyArray[i2]) - (Math.floor(frequencyArray[i2]) % 5);
-			
-				if(altAmp||random2()<.02){
-					if(i2%40!=moduloEq){
-						adjustedLength*=.1;
+		setInterval(function(){
+		
+			$('#text').append('.');
+			currentBeat--;
+			if(!currentBeat){
+				fadeVolume(beat2,0);
+				$('#text').append(',');
+				loops--;
+				if(!loops){
+					beat2.currentTime=beatTime;
+					var segments=Math.floor(beat.duration/(beatMilliseconds/1000))-beats;
+					beatTime=Math.floor(Math.random()*segments)*(beatMilliseconds/1000);
+					beats=beatsMinMax[0]+Math.round(Math.random()*(beatsMinMax[1]-beatsMinMax[0]));
+					loops=loopsMinMax[0]+Math.round(Math.random()*(loopsMinMax[1]-loopsMinMax[0]));
+					if(doPlaySaved&&savedLoops.length){
+						var r;
+						while(true){
+							r=Math.floor(Math.random()*savedLoops.length);
+							if(savedLoops[r][2]==1){
+								if(!lastLoopOnce){
+									lastLoopOnce=true;
+									break;
+								}
+							}else if(lastLoopOnce){
+								lastLoopOnce=false;
+								break;
+							}
+							if(Math.random()<.01){
+								break;
+							}
+						}
+						beatTime=savedLoops[r][0];
+						beats=savedLoops[r][1];
+						loops=savedLoops[r][2];
+						if(loops>1){
+							loops=2+Math.floor(Math.random()*3);
+						}
+					}
+					if($('#text a').length>40){
+						clear();
+					}
+					if(doPlaySaved){
+						$('#text').append(' <a href="#" onclick="removeLoop(this,'+beatTime+','+beats+');return false;">&nbsp;X&nbsp;</a>');
 					}else{
-						adjustedLength*=4;
-						adjustedLength=adjustedLength>200?0:adjustedLength;
+						$('#text').append(' <a href="#" onclick="saveLoop(this,'+beatTime+','+beats+','+loops+');return false;">&nbsp;&gt;&nbsp;</a>');
 					}
-				
-				
 				}
-
-                paths[i2].setAttribute('d', 'M '+ (i2) +',255 l 0,-' + adjustedLength);
-
-				ampTone.push(adjustedLength);
-				
-				ampTotal+=adjustedLength;
-				
-            }
+				//switch 1 with 3
+				var beat4=beat3;
+				beat3=beat;
+				fadeVolume(beat3,0);
+				beat=beat4;
+				beat.volume=0;
+				//
+				currentBeat=beats;
+				beat.currentTime=beatTime;
+				fadeVolume(beat,1);
+				beat.play();
+			}else if(doPlaySaved&&(currentBeat>1&&Math.random()<.25)){
+				fadeVolume(beat,.25);
+				if(Math.random()<.75){
+					fadeVolume(beat,0);
+					fadeVolume(beat2,1);
+					beat2.play();
+				}
+			}else{
+				fadeVolume(beat,1);
+				beat.play();
+				fadeVolume(beat2,0);
+			}
 			
-			var ampTone2=ampTone.slice();
-
-			var timestampSeconds=Date.now();
-
-			if(timestampSeconds-currentTonePlayedAt>intervalPlay){
-
-				var ampAverage=(ampTotal/ampTone.length);
-				var ampMax=0;
-				
-				for(var i3=0;i3<ampTone.length;i3++){
-					if(ampMax<ampTone[i3]){
-						ampMax=ampTone[i3];
-					}
+		},beatMilliseconds);
+		
+		var saveLoop=function(a,time,beats,loops){
+			$(a).css('background-color','green');
+			var i=savedLoops.length-1;
+			if(i>=0){
+				if(savedLoops[i][0]==time&&savedLoops[i][1]==beats&&savedLoops[i][2]==loops){
+					savedLoops[i][2]=1;
+				}else{
+					savedLoops.push([time,beats,loops]);
 				}
-				
-				ampAverage=ampMax*.9;
-				var ampAverage2=ampMax*.4;
-				
-				
-					
-				for(var i4=0;i4<6;i4++){
-				
-					ampTone=ampTone2.slice();
-					
-					for(var i3=0;i3<ampTone.length;i3++){
-						if(ampTone[i3]<ampAverage&&ampTone[i3]<ampAverage2){
-							ampTone[i3]=0;
-						}
-					}
-
-					var toneI=0;
-					amplitude=0;
-					
-					while(!amplitude&&random2()<.99){
-						toneI=Math.floor(random2()*ampTone.length);
-						amplitude=ampTone[toneI];
-						if(amplitude<ampAverage&&random2()<.6){
-							amplitude=0;
-						}
-					}
-
-					maxHistory[0]+=ampMax;
-					maxHistory.push(ampMax);
-					
-					if(maxHistory.length>20){
-						maxAmplitude=maxHistory[0]/maxHistory.length;
-						console.log(maxAmplitude);
-						maxHistory=[0];
-					}
-					
-					amplitude=amplitude/maxAmplitude;
-					
-					if(amplitude<0){
-						amplitude=0;
-					}
-					if(amplitude>=1){
-						amplitude=.99999;
-					}
-
-					while(lastTones.length>3+Math.floor(random2()*7)){
-						lastTones[0].pause();
-						lastTones.shift();
-					}
-
-					currentTone=tones[Math.floor(random2()*tones.length)];
-					lastTones.push(currentTone);
-
-					volumeHistory.push(amplitude);
-					while(volumeHistory.length>3){
-						volumeHistory.shift();
-					}
-
-					amplitude*=maxVolume;
-
-					currentTone.volume=amplitude;
-					currentTone.loop=true;
-
-					currentTone.currentTime=toneI+((random2()*3)-1);
-					
-					
-					currentTone.playbackRate=.5+(random2());
-					
-					currentTone.play();
-					
-					
-
-					currentTonePlayedAt=timestampSeconds;
-				
+			}else{
+				savedLoops.push([time,beats,loops]);
+			}
+			$('#saved').html(savedLoops.length);
+		};
+		window.saveLoop=saveLoop;
+		
+		var removeLoop=function(a,time,beats){
+			$(a).css('background-color','red');
+			var i;
+			var len=savedLoops.length;
+			for(i=0;i<len;i++){
+				if(savedLoops[i][0]==time&&savedLoops[i][1]==beats){
+					savedLoops.splice(i,1);
+					len--;
+					i--;
 				}
 			}
-        }
-        doDraw();
-    }
-
-    var soundNotAllowed = function (error) {
-        h.innerHTML = "You must allow your microphone.";
-        console.log(error);
-    }
-
-    /*window.navigator = window.navigator || {};
-    /*navigator.getUserMedia =  navigator.getUserMedia       ||
-                              navigator.webkitGetUserMedia ||
-                              navigator.mozGetUserMedia    ||
-                              null;*/
-    navigator.getUserMedia({audio:true}, soundAllowed, soundNotAllowed);
+			$('#saved').html(savedLoops.length);
+		};
+		window.removeLoop=removeLoop;
+		
+		var playSaved=function(a){
+			if(doPlaySaved){
+				doPlaySaved=false;
+				$(a).html('&nbsp;&gt; Play Saved&nbsp;');
+			}else{
+				doPlaySaved=true;
+				$(a).html('&nbsp;&gt; Play Random&nbsp;');
+			}
+			clear();
+		}
+		window.playSaved=playSaved;
+		
+		var clearSaved=function(a){
+			clear();
+			savedLoops=[];
+			$('#saved').html('0');
+		}
+		window.clearSaved=clearSaved;
+	}
 	
-};
-
-var random2Last=[0];
-
-function random2(){
-	//return Math.random();
-	if(random2Last.length<100||Math.random()<.0006){
+	var fadeVolumeClips=[];
+	var fadeVolumeClipsVolume=[];
+	
+	function fadeVolume(clip,newVolume){
+		var minus=0;
+		if(newVolume==1){
+			minus=Math.floor(Math.random()*5)*5;
+		}
+		newVolume=((Math.round((newVolume*100)/5)*5)-minus)/100;
+		var clipI=fadeVolumeClips.indexOf(clip);
+		if(clipI<0){
+			fadeVolumeClips.push(clip);
+			fadeVolumeClipsVolume.push(newVolume);
+		}else{
+			fadeVolumeClipsVolume[clipI]=newVolume;
+		}
+	}
+	
+	setInterval(function(){
 		var i;
-		var max=Math.floor(Math.random()*10000);
-		for(i=0;i<Math.random()*1000;i++){
-			Math.random();
-		}
-		if(Math.random()<.1){
-			max=Math.floor(Math.random()*8000);
-		}
-		if(Math.random()<.1){
-			max=Math.floor(Math.random()*4000);
-		}
-		if(Math.random()<.1){
-			max=Math.floor(Math.random()*2000);
-		}
-		if(Math.random()<.1){
-			max=Math.floor(Math.random()*1000);
-		}
-		if(Math.random()<.1){
-			max=Math.floor(Math.random()*800);
-		}
-		if(Math.random()<.1){
-			max=Math.floor(Math.random()*400);
-		}
-		if(Math.random()<.1){
-			max=Math.floor(Math.random()*200);
-		}
-		if(Math.random()<.1){
-			max=Math.floor(Math.random()*100);
-		}
-		for(i=0;i<max;i++){
-			Math.random();
-		}
-		for(i=0;i<200;i++){
-			random2Last.push(Math.random());
-		}
-		while(random2Last.length>4000){
-			for(i=0;i<3000;i++){
-				random2Last.shift();
+		var len=fadeVolumeClips.length;
+		for(i=0;i<len;i++){
+			var c=fadeVolumeClips[i];
+			var v=fadeVolumeClipsVolume[i];
+			if(Math.round(c.volume*100)==v*100){
+				fadeVolumeClips.splice(i,1);
+				fadeVolumeClipsVolume.splice(i,1);
+				len--;
+				i--;
+			}else if(c.volume<v){
+				if(c.volume>.95){
+					c.volume=1;
+				}else{
+					c.volume+=.05;
+				}
+			}else if(c.volume>v){
+				if(c.volume<.05){
+					c.volume=0;
+				}else{
+					c.volume-=.05;
+				}
 			}
 		}
-	}
-	
-	if(Math.random()<.25){
-		return random2Last[random2Last.length-1-Math.floor(Math.random()*7)];
-	}else{
-		return random2Last[Math.floor(Math.random()*random2Last.length)];
-	}
-}
+	},50);
 
 </script>
 <style>
-html,body{
-	width: 100%;
-	height: 100%;
-	padding: 0;
-	margin: 0;
-	background-color:#222;
-	font-size: 0;
-}
-
-svg{
-	display: block;
-	width: 100%;
-	height: 100%;
-	padding: 0;
-	margin: 0;
-	position:absolute;
-}
-
-h1{
-	width: 100%;
-	font-family: sans-serif;
-	position:absolute;
-	text-align:center;
-	color:white;
-	font-size: 18px;
-	top: 40%;
-	opacity: 1;
-	transition: opacity 1s ease-in-out;
-	-moz-transition: opacity 1s ease-in-out;
-	-webkit-transition: opacity 1s ease-in-out;
-}
-
-h1 a{
-	color: #48b1f4;
-	text-decoration:none;
-}
-
-path{
-	stroke-linecap: square;
-	stroke: white;
-	stroke-width: 0.5px;
-}
+	body{
+		font-size:32px;
+	}
+	a{
+		text-decoration: none;
+		border:1px solid black;
+	}
+	#menu{
+		position:fixed;
+		right:-1px;
+		bottom:-1px;
+		border:1px solid black;
+		padding:8px;
+		background-color:white;
+		z-index:1;
+	}
 </style>
 
 </head>
+
 <body>
 
-	<svg preserveAspectRatio="none" id="visualizer" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-		<defs>
-			<mask id="mask">
-				<g id="maskGroup">
-				</g>
-			</mask>
-			<linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-				<stop offset="0%" style="stop-color:#ff0a0a;stop-opacity:1" />
-				<stop offset="20%" style="stop-color:#f1ff0a;stop-opacity:1" />
-				<stop offset="90%" style="stop-color:#d923b9;stop-opacity:1" />
-				<stop offset="100%" style="stop-color:#050d61;stop-opacity:1" />
-			</linearGradient>
-		</defs>
-		<rect x="0" y="0" width="100%" height="100%" fill="url(#gradient)" mask="url(#mask)"></rect>
-	</svg>
-
-	<h1>In <a href="https://codepen.io/zapplebee/full/gbNbZE/">Full Page view</a>, please allow the use of your microphone</h1>
+	<span id="text">Click to start</span>
+	
+	<div id="menu">Saved: <span id="saved">0</span> <a id="playButton" href="#" onclick="playSaved(this);return false;">&nbsp;&gt; Play Saved&nbsp;</a> <a href="#" onclick="clearSaved();return false;">&nbsp;Clear&nbsp;</a></div>
 
 </body>
+
 </html>
