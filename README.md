@@ -1,6 +1,6 @@
 # RandomLoopComposer
 
-Allows you to discover loops in a song with a consistent BPM and arrange a new random song with your selections. The idea is that you'd create a song with sequencer software, set the mp3 in this, look for a new combination of loops to sequence, and use software like Audacity to record the results and remix the original song. It sounds better if you replace the mp3 with a better song. An example of this code in action can be [seen here](http://realultimatetv.com/RandomLoopComposer/).
+Allows you to discover loops in a song with a consistent BPM and arrange a new random song with your selections. The idea is that you'd create a song with sequencer software, set the mp3 in this, look for a new combination of loops to sequence, and use software like Audacity to record the results and remix the original song. It sounds better if you replace the mp3 with another song. An example of this code in action can be [seen here](http://realultimatetv.com/RandomLoopComposer/).
 
 [![realultimatetv.com](http://mouseonew.com/image-rlc2.jpg?)](http://realultimatetv.com/RandomLoopComposer/) 
 
