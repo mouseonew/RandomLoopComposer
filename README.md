@@ -11,11 +11,15 @@ In index.html look for these variables in the start function:
 ```
 	function start(){
 	
+		//tested with this song: https://theartistunion.com/mitis MitiS - Expose (Original Mix) _Free Download_.mp3
+		
 		var beat =new Audio('song_untitled_130bpm.mp3'); //main
 		var beat2=new Audio('song_untitled_130bpm.mp3'); //skip
 		var beat3=new Audio('song_untitled_130bpm.mp3'); //alternate main to fade
 		//
-		var beatMilliseconds=461.538*2;//130bpm 2bars
+		var beatMilliseconds=461.538*2; //130bpm 2bars
 		var loopsMinMax=[4,6];
 		var beatsMinMax=[1,8];
+		var groupsMinMax=[3,6];
+		//
 ```
