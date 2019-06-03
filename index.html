@@ -29,25 +29,34 @@
 	SOFTWARE.
 */
 
+//FUNCTION start
+
 	window.onclick=start;
-	
 	function start(){
 	
+		//tested with this song: https://theartistunion.com/mitis MitiS - Expose (Original Mix) _Free Download_.mp3
+		
 		var beat =new Audio('song_untitled_130bpm.mp3'); //main
 		var beat2=new Audio('song_untitled_130bpm.mp3'); //skip
 		var beat3=new Audio('song_untitled_130bpm.mp3'); //alternate main to fade
 		//
-		var beatMilliseconds=461.538*2;//130bpm 2bars
+		var beatMilliseconds=461.538*2; //130bpm 2bars
 		var loopsMinMax=[4,6];
 		var beatsMinMax=[1,8];
+		var groupsMinMax=[3,6];
 		//
 		var currentBeat=beats;
 		var loops=1;
 		var beats=1;
+		var groups=1;
 		var beatTime=0;
 		var savedLoops=[];
 		var doPlaySaved=false;
 		var lastLoopOnce=false;
+		var playingGroups=false;
+		var savedGroups=[];
+		var currentGroup=0;
+		var lastSavedLoops=[];
 		//
 		beat.volume=0;
 		beat2.volume=0;
@@ -55,19 +64,27 @@
 		beat.play();
 		beat2.play();
 		beat3.play();
+
+//FUNCTION window.onclick
 		
 		window.onclick=function(event){
 		
-			if(event.target==$('#text')[0]||event.target==$('body')[0]||event.target==$('html')[0]||event.target==$('#playButton')[0]){
+			if(event.target==$('#text')[0]||event.target==$('body')[0]||event.target==$('html')[0]){
 				loops=1;
 				currentBeat=1;
+				groups=1;
 				$('#text').append('x');
 			}
 			
 		};
 		
+//FUNCTION clear
+
 		var clear=function(){
-			if(doPlaySaved){
+		
+			if(playingGroups){
+				$('#text').html('Playing groups, click to change group<br/>');
+			}else if(doPlaySaved){
 				$('#text').html('Click anywhere to skip, click button to remove loop<br/>');
 			}else{
 				$('#text').html('Click anywhere to skip, click button to save loop, double click button for no repeat, triple click button for both<br/>');
@@ -75,6 +92,8 @@
 		}
 		clear();
 
+//INTERVAL BPM
+		
 		setInterval(function(){
 		
 			$('#text').append('.');
@@ -89,7 +108,15 @@
 					beatTime=Math.floor(Math.random()*segments)*(beatMilliseconds/1000);
 					beats=beatsMinMax[0]+Math.round(Math.random()*(beatsMinMax[1]-beatsMinMax[0]));
 					loops=loopsMinMax[0]+Math.round(Math.random()*(loopsMinMax[1]-loopsMinMax[0]));
-					if(doPlaySaved&&savedLoops.length){
+					if(doPlaySaved){
+						if(playingGroups){
+							groups--;
+							if(!groups){
+								groups=groupsMinMax[0]+Math.round(Math.random()*(groupsMinMax[1]-groupsMinMax[0]));
+								currentGroup=Math.floor(Math.random()*savedGroups.length);
+								savedLoops=savedGroups[currentGroup];
+							}
+						}
 						var r;
 						while(true){
 							r=Math.floor(Math.random()*savedLoops.length);
@@ -116,7 +143,9 @@
 					if($('#text a').length>40){
 						clear();
 					}
-					if(doPlaySaved){
+					if(playingGroups){
+						$('#text').append(' <a href="#" onclick="return false;">&nbsp;'+currentGroup+'&nbsp;</a>');
+					}else if(doPlaySaved){
 						$('#text').append(' <a href="#" onclick="removeLoop(this,'+beatTime+','+beats+');return false;">&nbsp;X&nbsp;</a>');
 					}else{
 						$('#text').append(' <a href="#" onclick="saveLoop(this,'+beatTime+','+beats+','+loops+');return false;">&nbsp;&gt;&nbsp;</a>');
@@ -148,6 +177,8 @@
 			
 		},beatMilliseconds);
 		
+//FUNCTION saveLoop
+
 		var saveLoop=function(a,time,beats,loops){
 			$(a).css('background-color','green');
 			var i=savedLoops.length-1;
@@ -164,6 +195,8 @@
 		};
 		window.saveLoop=saveLoop;
 		
+//FUNCTION removeLoop
+
 		var removeLoop=function(a,time,beats){
 			$(a).css('background-color','red');
 			var i;
@@ -176,32 +209,93 @@
 				}
 			}
 			$('#saved').html(savedLoops.length);
+			if(!savedLoops.length){
+				clearSaved();
+			}
+			loops=1;
+			currentBeat=1;
 		};
 		window.removeLoop=removeLoop;
 		
+//FUNCTION playSaved
+
 		var playSaved=function(a){
 			if(doPlaySaved){
 				doPlaySaved=false;
 				$(a).html('&nbsp;&gt; Play Saved&nbsp;');
+				$('#groups').hide();
 			}else{
+				if(!savedLoops.length){
+					return;
+				}
 				doPlaySaved=true;
 				$(a).html('&nbsp;&gt; Play Random&nbsp;');
+				$('#groups').show();
 			}
 			clear();
+			loops=1;
+			currentBeat=1;
 		}
 		window.playSaved=playSaved;
 		
+//FUNCTION clearSaved
+
 		var clearSaved=function(a){
+			if(doPlaySaved){
+				playSaved($('#playButton')[0]);
+			}
 			clear();
 			savedLoops=[];
 			$('#saved').html('0');
+			loops=1;
+			currentBeat=1;
 		}
 		window.clearSaved=clearSaved;
+		
+//FUNCTION playGroups
+
+		var playGroups=function(){
+			if(savedGroups.length){
+				if(!playingGroups){
+					playingGroups=true;
+					$('#menu').hide();
+					$('#stopPlayingGroups').show();
+					clear();
+					lastSavedLoops=savedLoops;
+				}else{
+					playingGroups=false;
+					$('#menu').show();
+					$('#stopPlayingGroups').hide();
+					clear();
+					savedLoops=lastSavedLoops;
+				}
+				loops=1;
+				currentBeat=1;
+				groups=1;
+			}
+		}
+		window.playGroups=playGroups;
+		
+//FUNCTION saveGroup
+
+		var saveGroup=function(){
+			var i;
+			var len=savedLoops.length;
+			var loops=[];
+			for(i=0;i<len;i++){
+				loops.push([savedLoops[i][0],savedLoops[i][1],savedLoops[i][2]]);
+			}
+			savedGroups.push(loops);
+			$('#savedGroups').html(savedGroups.length);
+		}
+		window.saveGroup=saveGroup;
 	}
 	
 	var fadeVolumeClips=[];
 	var fadeVolumeClipsVolume=[];
 	
+//FUNCTION fadeVolume
+
 	function fadeVolume(clip,newVolume){
 		var minus=0;
 		if(newVolume==1){
@@ -217,6 +311,8 @@
 		}
 	}
 	
+//INTERVAL fadeVolume
+
 	setInterval(function(){
 		var i;
 		var len=fadeVolumeClips.length;
@@ -262,6 +358,19 @@
 		background-color:white;
 		z-index:1;
 	}
+	#groups{
+		display:none;
+	}
+	#stopPlayingGroups{
+		display:none;
+		position:fixed;
+		right:-1px;
+		bottom:-1px;
+		border:1px solid black;
+		padding:8px;
+		background-color:white;
+		z-index:1;
+	}
 </style>
 
 </head>
@@ -270,8 +379,13 @@
 
 	<span id="text">Click to start</span>
 	
-	<div id="menu">Saved: <span id="saved">0</span> <a id="playButton" href="#" onclick="playSaved(this);return false;">&nbsp;&gt; Play Saved&nbsp;</a> <a href="#" onclick="clearSaved();return false;">&nbsp;Clear&nbsp;</a></div>
-
+	<div id="menu">
+		Saved: <span id="saved">0</span> <a id="playButton" href="#" onclick="playSaved(this);return false;">&nbsp;&gt; Play Saved&nbsp;</a> <a href="#" onclick="clearSaved();return false;">&nbsp;Clear&nbsp;</a>
+		<span id="groups">Groups: <span id="savedGroups">0</span> <a id="saveGroupButton" href="#" onclick="saveGroup();return false;">&nbsp;Save Group&nbsp;</a> <a id="playGroupsButton" href="#" onclick="playGroups();return false;">&nbsp;Play Groups&nbsp;</a></span>
+	</div>
+	<div id="stopPlayingGroups">
+		<a href="#" onclick="playGroups();return false;">&nbsp;Stop Playing Groups&nbsp;</a>
+	</div>
 </body>
 
 </html>
