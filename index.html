@@ -160,17 +160,17 @@
 				//
 				currentBeat=beats;
 				beat.currentTime=beatTime;
-				fadeVolume(beat,1);
+				fadeVolume(beat,.8+(Math.random()*.2));
 				beat.play();
 			}else if(doPlaySaved&&(currentBeat>1&&Math.random()<.25)){
-				fadeVolume(beat,.25);
+				fadeVolume(beat,.25+(Math.random()*.5));
 				if(Math.random()<.75){
-					fadeVolume(beat,0);
-					fadeVolume(beat2,1);
+					fadeVolume(beat,.1+(Math.random()*.2));
+					fadeVolume(beat2,.8+(Math.random()*.2));
 					beat2.play();
 				}
 			}else{
-				fadeVolume(beat,1);
+				fadeVolume(beat,.8+(Math.random()*.2));
 				beat.play();
 				fadeVolume(beat2,0);
 			}
@@ -298,9 +298,6 @@
 
 	function fadeVolume(clip,newVolume){
 		var minus=0;
-		if(newVolume==1){
-			minus=Math.floor(Math.random()*5)*5;
-		}
 		newVolume=((Math.round((newVolume*100)/5)*5)-minus)/100;
 		var clipI=fadeVolumeClips.indexOf(clip);
 		if(clipI<0){
