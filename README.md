@@ -1,6 +1,10 @@
 # RandomLoopComposer
 
-Allows you to discover loops in a song with a consistent BPM and arrange a new random song with your selections. The idea is that you'd create a song with sequencer software, set the mp3 in this, look for a new combination of loops to sequence, and use software like Audacity to record the results and remix the original song. It sounds better if you replace the mp3 with another song. An example of this code in action can be [seen here](http://realultimatetv.com/RandomLoopComposer/).
+Allows you to discover loops in a song with a consistent BPM and arrange a new random song with your selections. The idea is that you'd create a song with sequencer software, set the mp3 in this, look for a new combination of loops to sequence, and use software like Audacity to record the results and remix the original song. It sounds better if you replace the mp3 with another song.
+
+Best results can be had by saving 3-5 loops that mix well, a few of them breaks with a double click, test them out with the play saved button, remove the ones that don't mix well, and then save them as a group when a good mix is found. Then clear and create another group. When you play groups it'll randomly switch between the groups created.
+
+An example of this code in action can be [seen here](http://realultimatetv.com/RandomLoopComposer/).
 
 [![realultimatetv.com](http://mouseonew.com/image-rlc2.jpg?)](http://realultimatetv.com/RandomLoopComposer/) 
 
@@ -11,7 +15,7 @@ In index.html look for these variables in the start function:
 ```
 	function start(){
 	
-		//tested with song: https://theartistunion.com/mitis MitiS - Expose (Original Mix) _Free Download_.mp3
+		//tested with song: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
 		
 		var beat =new Audio('song_untitled_130bpm.mp3'); //main
 		var beat2=new Audio('song_untitled_130bpm.mp3'); //skip
