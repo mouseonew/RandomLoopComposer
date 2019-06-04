@@ -17,17 +17,18 @@ In index.html look for these variables in the start function:
 	
 //#### VARIABLES ##################################
 
-		//tested with this song, fade on: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
+		//tested with this song, skip on and 2bars: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
 		
 		var 	beat =new Audio('mouseonew - discarded torch.mp3'); //main
 		var 	beat2=new Audio('mouseonew - discarded torch.mp3'); //skip
 		var 	beat3=new Audio('mouseonew - discarded torch.mp3'); //alternate main to fade
 		//
-		var 	beatMilliseconds=461.538*2; //130bpm 2bars
+		var 	beatMilliseconds= 461.538 * 1; //130bpm * 1bar
 		var 	beatsMinMax=[1,8];
 		var 	loopsMinMax=[4,6];
-		var 	groupsMinMax=[3,6];
-				fade=false;
+		var 	groupsMinMax=[2,5];
+		var 	skip=false;
+			fade=true;
 			
 //##################################################
 ```
