@@ -29,22 +29,29 @@
 	SOFTWARE.
 */
 
+	var fade;
+	window.onclick=start;
+
 //FUNCTION start
 
-	window.onclick=start;
 	function start(){
 	
-		//tested with song: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
+//#### VARIABLES ##################################
+
+		//tested with this song, fade on: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
 		
-		var beat =new Audio('song_untitled_130bpm.mp3'); //main
-		var beat2=new Audio('song_untitled_130bpm.mp3'); //skip
-		var beat3=new Audio('song_untitled_130bpm.mp3'); //alternate main to fade
+		var 	beat =new Audio('mouseonew - dicarded torch.mp3'); //main
+		var 	beat2=new Audio('mouseonew - dicarded torch.mp3'); //skip
+		var 	beat3=new Audio('mouseonew - dicarded torch.mp3'); //alternate main to fade
 		//
-		var beatMilliseconds=461.538*2; //130bpm 2bars
-		var beatsMinMax=[1,8];
-		var loopsMinMax=[4,6];
-		var groupsMinMax=[3,6];
-		//
+		var 	beatMilliseconds=461.538*2; //130bpm 2bars
+		var 	beatsMinMax=[1,8];
+		var 	loopsMinMax=[4,6];
+		var 	groupsMinMax=[3,6];
+				fade=false;
+			
+//##################################################
+
 		var currentBeat=beats;
 		var loops=1;
 		var beats=1;
@@ -297,6 +304,11 @@
 //FUNCTION fadeVolume
 
 	function fadeVolume(clip,newVolume){
+		if(!fade){
+			newVolume=newVolume<=.4?0:newVolume;
+			clip.volume=newVolume;
+			return;
+		}
 		var minus=0;
 		newVolume=((Math.round((newVolume*100)/5)*5)-minus)/100;
 		var clipI=fadeVolumeClips.indexOf(clip);
