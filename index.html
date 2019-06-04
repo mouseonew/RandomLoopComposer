@@ -38,17 +38,18 @@
 	
 //#### VARIABLES ##################################
 
-		//tested with this song, fade on: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
+		//tested with this song, skip on and 2bars: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
 		
 		var 	beat =new Audio('mouseonew - discarded torch.mp3'); //main
 		var 	beat2=new Audio('mouseonew - discarded torch.mp3'); //skip
 		var 	beat3=new Audio('mouseonew - discarded torch.mp3'); //alternate main to fade
 		//
-		var 	beatMilliseconds=461.538*2; //130bpm 2bars
+		var 	beatMilliseconds= 461.538 * 1; //130bpm * 1bar
 		var 	beatsMinMax=[1,8];
 		var 	loopsMinMax=[4,6];
-		var 	groupsMinMax=[3,6];
-				fade=false;
+		var 	groupsMinMax=[2,5];
+		var 	skip=false;
+				fade=true;
 			
 //##################################################
 
@@ -136,7 +137,7 @@
 								lastLoopOnce=false;
 								break;
 							}
-							if(Math.random()<.01){
+							if(Math.random()<.01||savedLoops.length==1){
 								break;
 							}
 						}
@@ -144,7 +145,7 @@
 						beats=savedLoops[r][1];
 						loops=savedLoops[r][2];
 						if(loops>1){
-							loops=2+Math.floor(Math.random()*3);
+							loops=2+Math.floor(Math.random()*2);
 						}
 					}
 					if($('#text a').length>40){
@@ -169,7 +170,7 @@
 				beat.currentTime=beatTime;
 				fadeVolume(beat,.8+(Math.random()*.2));
 				beat.play();
-			}else if(doPlaySaved&&(currentBeat>1&&Math.random()<.25)){
+			}else if(skip&&doPlaySaved&&(currentBeat>1&&Math.random()<.25)){
 				fadeVolume(beat,.25+(Math.random()*.5));
 				if(Math.random()<.75){
 					fadeVolume(beat,.1+(Math.random()*.2));
@@ -296,6 +297,40 @@
 			$('#savedGroups').html(savedGroups.length);
 		}
 		window.saveGroup=saveGroup;
+		
+//FUNCTION showBatch
+
+		var showBatch=function(){
+			var bat='REM Copy and paste this into .bat file in the same directory as ffmpeg.exe and the mp3, then run batch file.'+"\r\n";
+			var i;
+			var len=savedGroups.length;
+			var i2;
+			var len2;
+			var time;
+			var minutes;
+			var seconds;
+			for(i=0;i<len;i++){
+				len2=savedGroups[i].length;
+				for(i2=0;i2<len2;i2++){
+					time=savedGroups[i][i2][0];
+					minutes=Math.floor(time/60)+'';
+					minutes=minutes.length==1?'0'+minutes:minutes;
+					seconds=(time-(minutes*60))+'';
+					seconds=seconds.split('.')[0].length==1?'0'+seconds:seconds;
+					bat+='ffmpeg -i "'+beat.src.split('/').pop().replace(/%20/g, ' ')+'" -ss 00:'+minutes+':'+seconds+' -to 00:';
+					time+=savedGroups[i][i2][1]*(beatMilliseconds/1000);
+					minutes=Math.floor(time/60)+'';
+					minutes=minutes.length==1?'0'+minutes:minutes;
+					seconds=(time-(minutes*60))+'';
+					seconds=seconds.split('.')[0].length==1?'0'+seconds:seconds;
+					bat+=minutes+':'+seconds+' -c copy "loop_'+((i+'').length==1?'0'+i:i)+'_'+((i2+'').length==1?'0'+i2:i2)+'.mp3"'+"\r\n";
+				}
+			}
+			bat+='PAUSE';
+			var w = window.open();
+			$(w.document.body).html('<html><head></head><body><pre>'+bat+'</pre></body></html>');
+		}
+		window.showBatch=showBatch;
 	}
 	
 	var fadeVolumeClips=[];
@@ -393,6 +428,7 @@
 		<span id="groups">Groups: <span id="savedGroups">0</span> <a id="saveGroupButton" href="#" onclick="saveGroup();return false;">&nbsp;Save Group&nbsp;</a> <a id="playGroupsButton" href="#" onclick="playGroups();return false;">&nbsp;Play Groups&nbsp;</a></span>
 	</div>
 	<div id="stopPlayingGroups">
+		<a href="#" onclick="showBatch();return false;">&nbsp;Show ffmpeg Loop Split Batch File&nbsp;</a> 
 		<a href="#" onclick="playGroups();return false;">&nbsp;Stop Playing Groups&nbsp;</a>
 	</div>
 	
