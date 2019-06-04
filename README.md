@@ -15,15 +15,19 @@ In index.html look for these variables in the start function:
 ```
 	function start(){
 	
-		//tested with song: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
+//#### VARIABLES ##################################
+
+		//tested with this song, fade on: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
 		
-		var beat =new Audio('song_untitled_130bpm.mp3'); //main
-		var beat2=new Audio('song_untitled_130bpm.mp3'); //skip
-		var beat3=new Audio('song_untitled_130bpm.mp3'); //alternate main to fade
+		var 	beat =new Audio('mouseonew - dicarded torch.mp3'); //main
+		var 	beat2=new Audio('mouseonew - dicarded torch.mp3'); //skip
+		var 	beat3=new Audio('mouseonew - dicarded torch.mp3'); //alternate main to fade
 		//
-		var beatMilliseconds=461.538*2; //130bpm 2bars
-		var beatsMinMax=[1,8];
-		var loopsMinMax=[4,6];
-		var groupsMinMax=[3,6];
-		//
+		var 	beatMilliseconds=461.538*2; //130bpm 2bars
+		var 	beatsMinMax=[1,8];
+		var 	loopsMinMax=[4,6];
+		var 	groupsMinMax=[3,6];
+				fade=false;
+			
+//##################################################
 ```
