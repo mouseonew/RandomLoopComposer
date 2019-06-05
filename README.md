@@ -16,7 +16,6 @@ In index.html look for these variables in the start function:
 	function start(){
 	
 //#### VARIABLES ##################################
-
 		//tested with this song, skip on and 2bars: https://soundcloud.com/mitis/mitis-expose-original-mix MitiS - Expose (Original Mix) _Free Download_.mp3
 		
 		var 	beat =new Audio('mouseonew - discarded torch.mp3'); //main
@@ -24,7 +23,7 @@ In index.html look for these variables in the start function:
 		var 	beat3=new Audio('mouseonew - discarded torch.mp3'); //alternate main to fade
 		//
 		var 	beatMilliseconds= 461.538 * 1; //130bpm * 1bar
-		var 	beatsMinMax=[1,8];
+		var 	beatsMinMax=[2,10];
 		var 	loopsMinMax=[4,6];
 		var 	groupsMinMax=[2,5];
 		var 	skip=false;
